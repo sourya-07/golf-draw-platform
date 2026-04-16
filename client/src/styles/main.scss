@@ -1,0 +1,138 @@
+
+// CSS Reset & Base Defaults
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-body;
+  background-color: $color-bg-primary;
+  color: $color-text-primary;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-heading;
+  color: $color-text-primary;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+a {
+  color: $color-accent;
+  text-decoration: none;
+  transition: color $transition-fast;
+  
+  &:hover {
+    color: $color-accent-hover;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+// Global Layout Classes
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+// Navbar
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: $color-bg-primary;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  
+  .logo {
+    font-family: $font-heading;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  
+  nav {
+    display: flex;
+    gap: 2rem;
+    
+    a {
+      font-weight: 500;
+      color: $color-text-secondary;
+      
+      &:hover {
+        color: $color-text-primary;
+      }
+    }
+  }
+}
+
+// Buttons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: $radius-md;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all $transition-fast;
+  font-family: $font-body;
+  
+  &-primary {
+    background-color: $color-accent;
+    color: white;
+    
+    &:hover {
+      background-color: $color-accent-hover;
+      color: white;
+    }
+  }
+  
+  &-outline {
+    background-color: transparent;
+    border: 1px solid $color-text-primary;
+    color: $color-text-primary;
+    
+    &:hover {
+      background-color: $color-text-primary;
+      color: white;
+    }
+  }
+}
+
+// Footer
+.footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: $color-text-secondary;
+  font-size: 0.875rem;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+// Simple Page Layouts
+.page {
+  animation: fadeIn $transition-medium;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
