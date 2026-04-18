@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Users, Target, Heart, Trophy, BarChart2, ArrowLeft } from 'lucide-react';
 
 const navItems = [
-  { path: '/admin', label: 'Overview', icon: '📊', exact: true },
-  { path: '/admin/users', label: 'Users', icon: '👥' },
-  { path: '/admin/draws', label: 'Draws', icon: '🎯' },
-  { path: '/admin/charities', label: 'Charities', icon: '💚' },
-  { path: '/admin/winners', label: 'Winners', icon: '🏆' },
-  { path: '/admin/reports', label: 'Reports', icon: '📈' },
+  { path: '/admin',           label: 'Overview',  Icon: LayoutDashboard, exact: true },
+  { path: '/admin/users',     label: 'Users',     Icon: Users },
+  { path: '/admin/draws',     label: 'Draws',     Icon: Target },
+  { path: '/admin/charities', label: 'Charities', Icon: Heart },
+  { path: '/admin/winners',   label: 'Winners',   Icon: Trophy },
+  { path: '/admin/reports',   label: 'Reports',   Icon: BarChart2 },
 ];
 
 const AdminLayout = ({ children, title }) => {
@@ -53,8 +54,8 @@ const AdminLayout = ({ children, title }) => {
         </div>
 
         {/* Nav links */}
-        <nav style={{ flex: 1 }}>
-          {navItems.map(({ path, label, icon, exact }) => {
+        <nav style={{ flex: 1, padding: '0.5rem 0' }}>
+          {navItems.map(({ path, label, Icon, exact }) => {
             const isActive = exact
               ? location.pathname === path
               : location.pathname.startsWith(path);
@@ -65,7 +66,7 @@ const AdminLayout = ({ children, title }) => {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.75rem',
+                  gap: '0.65rem',
                   padding: '0.65rem 1.25rem',
                   color: isActive ? '#0D9488' : '#4A4A4A',
                   background: isActive ? 'rgba(13,148,136,0.07)' : 'transparent',
@@ -78,7 +79,11 @@ const AdminLayout = ({ children, title }) => {
                   margin: '1px 0.5rem 1px 0',
                 }}
               >
-                <span style={{ fontSize: '1rem' }}>{icon}</span>
+                <Icon
+                  size={16}
+                  strokeWidth={isActive ? 2.5 : 1.8}
+                  color={isActive ? '#0D9488' : '#6b7280'}
+                />
                 {label}
               </Link>
             );
@@ -93,14 +98,15 @@ const AdminLayout = ({ children, title }) => {
           <Link to="/dashboard" style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: '0.4rem',
             color: '#9ca3af',
             textDecoration: 'none',
             fontSize: '0.8rem',
             fontWeight: 500,
             transition: 'color 0.15s',
           }}>
-            ← Dashboard
+            <ArrowLeft size={13} strokeWidth={2} />
+            Dashboard
           </Link>
         </div>
       </aside>
