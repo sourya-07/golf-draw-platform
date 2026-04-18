@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SubscriptionProvider } from './context/SubscriptionContext';
@@ -49,6 +49,17 @@ const Navigation = () => {
   );
 };
 
+// Admin uses full-width layout (no max-width container)
+const MainContent = ({ children }) => {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
+  return (
+    <main className={`main-content${isAdmin ? ' admin-full' : ''}`}>
+      {children}
+    </main>
+  );
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -57,7 +68,7 @@ function App() {
           <Router>
             <div className="app-container">
               <Navigation />
-              <main className="main-content">
+              <MainContent>
                 <Routes>
                   {/* Public */}
                   <Route path="/" element={<Home />} />
@@ -68,7 +79,7 @@ function App() {
                   {/* Subscriber */}
                   <Route path="/dashboard" element={<Dashboard />} />
 
-                  {/* Admin — all protected by AdminGate */}
+                  {/* Admin — protected by AdminGate */}
                   <Route path="/admin" element={<AdminGate><AdminOverview /></AdminGate>} />
                   <Route path="/admin/users" element={<AdminGate><AdminUsers /></AdminGate>} />
                   <Route path="/admin/draws" element={<AdminGate><AdminDraws /></AdminGate>} />
@@ -79,7 +90,7 @@ function App() {
                   {/* Fallback */}
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
-              </main>
+              </MainContent>
               <footer className="footer">
                 <p>&copy; {new Date().getFullYear()} Digital Heroes Golf Club</p>
               </footer>
