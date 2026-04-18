@@ -37,6 +37,7 @@ async function handleWebhook(req, res) {
 
   try {
     switch (event.type) {
+      // Fired when checkout completes — works for both free and paid plans
       case 'checkout.session.completed': {
         const session = event.data.object;
         const userId = session.metadata?.userId;
@@ -52,10 +53,23 @@ async function handleWebhook(req, res) {
             stripe_subscription_id: subscriptionId,
           }).eq('id', userId);
 
-          // Send confirmation email
           const { data: userProfile } = await supabase
             .from('users').select('email, full_name').eq('id', userId).single();
           if (userProfile) sendSubscriptionConfirmedEmail(userProfile).catch(console.error);
+        }
+        break;
+      }
+
+      // Renewal payment succeeded — keep status active
+      case 'invoice.payment_succeeded':
+      case 'invoice.paid': {
+        const invoice = event.data.object;
+        const subId = invoice.subscription;
+        if (subId) {
+          await supabase
+            .from('users')
+            .update({ subscription_status: 'active' })
+            .eq('stripe_subscription_id', subId);
         }
         break;
       }
@@ -76,18 +90,6 @@ async function handleWebhook(req, res) {
           await supabase
             .from('users')
             .update({ subscription_status: 'lapsed' })
-            .eq('stripe_subscription_id', subId);
-        }
-        break;
-      }
-
-      case 'invoice.paid': {
-        const invoice = event.data.object;
-        const subId = invoice.subscription;
-        if (subId) {
-          await supabase
-            .from('users')
-            .update({ subscription_status: 'active' })
             .eq('stripe_subscription_id', subId);
         }
         break;
