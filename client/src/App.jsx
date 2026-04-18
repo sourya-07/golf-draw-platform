@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SubscriptionProvider } from './context/SubscriptionContext';
@@ -11,24 +11,38 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 
+// Admin Pages
+import AdminOverview from './pages/admin/AdminOverview';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminDraws from './pages/admin/AdminDraws';
+import AdminCharities from './pages/admin/AdminCharities';
+import AdminWinners from './pages/admin/AdminWinners';
+import AdminReports from './pages/admin/AdminReports';
+
+// Guards
+import AdminGate from './components/AdminGate';
+
 const queryClient = new QueryClient();
 
 const Navigation = () => {
   const { user, logout } = useAuth();
-  
+
   return (
     <header className="navbar">
       <div className="logo">Digital Heroes</div>
       <nav>
-        <a href="/">Home</a>
-        <a href="/charities">Charities</a>
+        <Link to="/">Home</Link>
+        <Link to="/charities">Charities</Link>
         {user ? (
           <>
-            <a href="/dashboard">Dashboard</a>
+            <Link to="/dashboard">Dashboard</Link>
+            {user.is_admin && (
+              <Link to="/admin" style={{ color: '#F59E0B', fontWeight: 700 }}>Admin</Link>
+            )}
             <button className="btn btn-outline" onClick={logout}>Logout</button>
           </>
         ) : (
-          <a href="/login" className="btn btn-primary">Login</a>
+          <Link to="/login" className="btn btn-primary">Login</Link>
         )}
       </nav>
     </header>
@@ -45,11 +59,25 @@ function App() {
               <Navigation />
               <main className="main-content">
                 <Routes>
+                  {/* Public */}
                   <Route path="/" element={<Home />} />
                   <Route path="/charities" element={<Charities />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+
+                  {/* Subscriber */}
                   <Route path="/dashboard" element={<Dashboard />} />
+
+                  {/* Admin — all protected by AdminGate */}
+                  <Route path="/admin" element={<AdminGate><AdminOverview /></AdminGate>} />
+                  <Route path="/admin/users" element={<AdminGate><AdminUsers /></AdminGate>} />
+                  <Route path="/admin/draws" element={<AdminGate><AdminDraws /></AdminGate>} />
+                  <Route path="/admin/charities" element={<AdminGate><AdminCharities /></AdminGate>} />
+                  <Route path="/admin/winners" element={<AdminGate><AdminWinners /></AdminGate>} />
+                  <Route path="/admin/reports" element={<AdminGate><AdminReports /></AdminGate>} />
+
+                  {/* Fallback */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </main>
               <footer className="footer">
