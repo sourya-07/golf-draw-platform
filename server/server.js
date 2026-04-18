@@ -17,13 +17,16 @@ app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 
 app.use(cors({
   origin: (origin, callback) => {
+    // Strip trailing slash from CLIENT_URL if present
+    const clientUrl = (process.env.CLIENT_URL || '').replace(/\/$/, '');
     const allowed = [
-      process.env.CLIENT_URL,
+      clientUrl,
       'http://localhost:5173',
       'http://localhost:3000',
-    ];
-    // Allow any vercel.app subdomain
-    if (!origin || allowed.includes(origin) || /\.vercel\.app$/.test(origin)) {
+    ].filter(Boolean);
+    // Strip trailing slash from incoming origin for comparison
+    const normalizedOrigin = (origin || '').replace(/\/$/, '');
+    if (!origin || allowed.includes(normalizedOrigin) || /\.vercel\.app$/.test(normalizedOrigin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
