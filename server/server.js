@@ -16,7 +16,19 @@ const app = express();
 app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    const allowed = [
+      process.env.CLIENT_URL,
+      'http://localhost:5173',
+      'http://localhost:3000',
+    ];
+    // Allow any vercel.app subdomain
+    if (!origin || allowed.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
